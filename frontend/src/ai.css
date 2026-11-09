@@ -1,0 +1,13 @@
+.ai { display: grid; gap: 22px; }
+.ai h2 { margin-bottom: 8px; }
+.ai-summary { font-size: 1.1rem; margin: 0; max-width: 62ch; }
+.ai ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.gap { border-left: 4px solid var(--bad); padding: 4px 0 4px 14px; margin-bottom: 12px; }
+.gap p { margin: 2px 0; }
+.rewrite { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 12px; }
+.rewrite div { padding: 12px 14px; border-radius: 12px; }
+.rewrite .before { background: #fde5e5; }
+.rewrite .after { background: #dff5ec; }
+.rewrite small { display: block; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
+.note { background: #fff6dd; padding: 12px 16px; border-radius: 12px; margin: 0; }
+.spinner-note { color: var(--muted); margin: 0; }

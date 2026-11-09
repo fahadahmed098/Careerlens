@@ -1,0 +1,17 @@
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+.brand { font: 800 1.3rem 'Bricolage Grotesque', sans-serif; letter-spacing: -0.02em; }
+.topbar .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.topbar .who { color: var(--muted); font-size: .9rem; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 8px 18px; }
+button.ghost:hover { border-color: var(--accent); }
+.authform { display: grid; gap: 12px; max-width: 380px; }
+.authform input { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font: inherit; }
+.authform input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.linkbtn { background: none; border: 0; color: var(--accent); padding: 0; text-decoration: underline; cursor: pointer; font: inherit; justify-self: start; }
+.hist { display: grid; gap: 10px; }
+.hist-row { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.hist-row .open { background: none; color: var(--ink); text-align: left; padding: 0; border-radius: 0; flex: 1; font-weight: 400; }
+.hist-row small { display: block; color: var(--muted); }
+.badge { font-weight: 700; padding: 4px 12px; border-radius: 999px; color: #fff; }
+.badge.high { background: var(--good); } .badge.mid { background: var(--warn); } .badge.low { background: var(--bad); }
+.hist-row .del { background: none; color: var(--bad); padding: 6px 10px; border-radius: 8px; font-weight: 600; }
