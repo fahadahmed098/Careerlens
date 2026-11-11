@@ -27,7 +27,7 @@ const features = [
 ];
 const faqs = [
   ['Do I need an account?', 'You can open the analyzer and choose your file without one. To run the analysis you log in or create a free account, right on the same page, and your file stays put.'],
-  ['Which files can I upload?', 'PDF and DOCX files up to 5 MB. Scanned image PDFs are not supported yet.'],
+  ['Which files can I upload?', 'PDF and DOCX files up to 4 MB. Scanned image PDFs are not supported yet.'],
   ['Do you store my resume?', 'No. The text is sent to an AI provider to write the review and is not saved by CareerLens. Only the score, skills and report go into your history.'],
   ['How is the score calculated?', 'The job description is scanned for known skills, and the score is the share of them found in your resume. The AI review then explains the gaps.'],
   ['Can I delete my data?', 'Yes. Delete any analysis from your dashboard at any time.'],

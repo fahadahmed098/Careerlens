@@ -53,9 +53,13 @@ export default function Analyzer() {
 
       <section className="panel input">
         <label className={`drop ${file ? 'has-file' : ''}`}>
-          <input type="file" accept=".pdf,.docx" onChange={(e) => setFile(e.target.files[0] || null)} />
+          <input type="file" accept=".pdf,.docx" onChange={(e) => {
+            const f = e.target.files[0] || null;
+            if (f && f.size > 4 * 1024 * 1024) { setError('This file is larger than 4 MB. Please choose a smaller PDF or DOCX.'); setFile(null); return; }
+            setError(''); setFile(f);
+          }} />
           <strong>{file ? file.name : 'Choose your resume'}</strong>
-          <span>{file ? 'Click to change file' : 'PDF or DOCX, up to 5 MB'}</span>
+          <span>{file ? 'Click to change file' : 'PDF or DOCX, up to 4 MB'}</span>
         </label>
 
         {!user && file && (

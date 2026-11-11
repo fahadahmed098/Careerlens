@@ -13,9 +13,11 @@ app.set('trust proxy', 1);
 app.use(cors({ origin: process.env.FRONTEND_URL || true }));
 app.use(express.json());
 app.use('/api/auth', authRouter);
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+const wrap = (fn) => (req, res, next) => fn(req, res, next).catch((e) => res.status(500).json({ error: e.message }));
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
+app.get('/', (_req, res) => res.json({ name: 'CareerLens API', ok: true }));
 
 // Guest bhi analyze kar sakta hai; login ho to result history mein save hota hai
 app.post('/api/analyze', requireAuth, upload.single('resume'), async (req, res) => {
@@ -59,15 +61,15 @@ app.post('/api/analyze', requireAuth, upload.single('resume'), async (req, res) 
   }
 });
 
-app.get('/api/history', requireAuth, async (req, res) => {
+app.get('/api/history', requireAuth, wrap(async (req, res) => {
   const r = await pool.query(
     'SELECT id, file_name, job_title, match_score, created_at FROM analyses WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
     [req.user.id]
   );
   res.json(r.rows);
-});
+}));
 
-app.get('/api/history/:id', requireAuth, async (req, res) => {
+app.get('/api/history/:id', requireAuth, wrap(async (req, res) => {
   const q = req.user.role === 'admin'
     ? ['SELECT * FROM analyses WHERE id = $1', [req.params.id]]
     : ['SELECT * FROM analyses WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]];
@@ -76,14 +78,13 @@ app.get('/api/history/:id', requireAuth, async (req, res) => {
   if (!a) return res.status(404).json({ error: 'Nahi mila.' });
   res.json({ fileName: a.file_name, score: a.match_score, matched: a.matched_skills, missing: a.missing_skills,
              extra: a.extra_skills, ai: a.ai_report, aiError: a.ai_report ? null : 'Is analysis ke waqt AI report nahi bani thi.' });
-});
+}));
 
-app.delete('/api/history/:id', requireAuth, async (req, res) => {
+app.delete('/api/history/:id', requireAuth, wrap(async (req, res) => {
   await pool.query('DELETE FROM analyses WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]);
   res.json({ ok: true });
-});
+}));
 
-const wrap = (fn) => (req, res, next) => fn(req, res, next).catch((e) => res.status(500).json({ error: e.message }));
 
 // Contact form (public, spam se bachne ke liye IP par 5 messages/ghanta)
 const hits = new Map();
@@ -162,8 +163,20 @@ app.delete('/api/admin/messages/:id', requireAdmin, wrap(async (req, res) => {
   res.json({ ok: true });
 }));
 
-const port = process.env.PORT || 5000;
+// Har error JSON mein wapas jaye (frontend isi ki umeed rakhta hai)
+app.use((err, _req, res, _next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'File is too large. Please upload a file under 4 MB.' });
+  res.status(500).json({ error: err.message || 'Server error.' });
+});
+
 initDb()
   .then(() => console.log('Database connected, tables ready.'))
-  .catch((err) => console.error('[DB] connect fail (guest mode chalega):', err.message))
-  .finally(() => app.listen(port, () => console.log(`API chal rahi hai: http://localhost:${port}`)));
+  .catch((err) => console.error('[DB] connect fail:', err.message));
+
+// Apne PC par port par chalta hai. Vercel par sirf app export hoti hai.
+if (!process.env.VERCEL) {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => console.log(`API chal rahi hai: http://localhost:${port}`));
+}
+
+export default app;
